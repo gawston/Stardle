@@ -64,9 +64,6 @@ export default function Home() {
     setIsWon(false);
   }
 
-  console.log(randomCharacter);
-  console.log(characters);
-
   return (
     <div className="flex flex-col items-center mx-auto px-2">
       <h1 className="text-5xl lg:text-8xl font-extrabold text-center uppercase mt-10">Stardle</h1>
