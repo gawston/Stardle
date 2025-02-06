@@ -36,7 +36,6 @@ export default function Home() {
     }
     document.getElementById('search').value = '';
     setSearch([]);
-    console.log(characters);
   };
 
   useEffect(() => {
