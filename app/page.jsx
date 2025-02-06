@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import initialCharacters from './data.js';
 import Image from "next/image.js";
 
@@ -8,6 +8,7 @@ export default function Home() {
   const [search, setSearch] = useState([]);
   const [characters, setCharacters] = useState([]);
   const [randomCharacter, setRandomCharacter] = useState(null);
+  const [isWon, setIsWon] = useState(false);
 
   const getRandomCharacter = () => {
     const randomIndex = Math.floor(Math.random() * initialCharacters.length);
@@ -21,19 +22,18 @@ export default function Home() {
         if (c.name.toLowerCase().includes(input.toLowerCase())) {
           data.push(c);
         }
-      })
+      });
     }
     setSearch(data);
   };
 
   const changeSelectStage = (index, e) => {
-    let data = search;
+    let data = [...search];
     data[index].select = true;
     if (!characters.some((c) => c.name === data[index].name)) {
       setCharacters([...characters, data[index]]);
+      handleIsWon(data[index]);
     }
-    e.target.style.pointerEvents = 'none';
-    e.target.style.backgroundColor = '#dadada';
     document.getElementById('search').value = '';
     setSearch([]);
     console.log(characters);
@@ -43,7 +43,29 @@ export default function Home() {
     getRandomCharacter();
   }, []);
 
-  // console.log(randomCharacter);
+  const handleIsWon = (data) => {
+    let score = 0;
+    if (data.name == randomCharacter.name) score++;
+    if (data.img == randomCharacter.img) score++;
+    if (data.combatType == randomCharacter.combatType) score++;
+    if (data.path == randomCharacter.path) score++;
+    if (data.star == randomCharacter.star) score++;
+
+    if (score == 5) setIsWon(true);
+  }
+
+  const playAgain = () => {
+    setCharacters([]);
+    getRandomCharacter();
+    initialCharacters.map((e) => {
+      e.select = false;
+    });
+    setSearch([]);
+    setIsWon(false);
+  }
+
+  console.log(randomCharacter);
+  console.log(characters);
 
   return (
     <div className="flex flex-col items-center mx-auto">
@@ -75,7 +97,7 @@ export default function Home() {
       {/* display character */}
       {characters.map((data, index) => (
         (data.select) ? (
-          <div className="w-[800px] grid grid-cols-5 text-center h-20 border-x-2 border-b-2 border-[#eee] gap-[1px] fade-in" key={index}>
+          <div className="w-[800px] grid grid-cols-5 text-center h-20 border-x-2 border-b-2 border-[#eee] gap-[1px] slide-in-bck-center scale-in-ver-top" key={index}>
             <div className="w-full h-full flex items-center justify-center relative px-2 my-auto mx-auto">
               <Image width={50} height={50} src={data.img}  alt="" className="w-12 h-12 object-cover"/>
               <div className="absolute w-full h-full opacity-70 z-[-1]" style={{backgroundColor: data.img == randomCharacter.img ? '#22c55e' : '#ef4444'}}></div>
@@ -100,8 +122,31 @@ export default function Home() {
         ) : null
       ))}
 
+      {/* if dont have character data */}
+      {(characters.length == 0) ? (
+        <div className="w-[800px] flex justify-center items-center text-center h-20 border-x-2 border-b-2 border-[#eee] gap-[1px] slide-in-bck-center">
+            Display Characters . . . .
+        </div>
+      ) : null }
+
       {/* footer */}
       <div className="w-full flex justify-center items-center mt-32"></div>
+
+      {/* popup */}
+      {(isWon) ? (
+        <div className="relative flex justify-center items-center">
+          <div className="fixed w-[500px] border border-[#eee] bg-[#171717] rounded-[12px_0_0_0] overflow-hidden scale-in-center">
+            <div className="bg-[#eee] text-black w-full py-2">
+              <p className="my-auto text-center">YOU WON!</p>
+            </div>
+            <div className="flex flex-col justify-center items-center">
+              <Image width={50} height={50} src={randomCharacter.img}  alt="" className="mt-8 w-20 h-20 object-cover"/>
+              <p className="mt-2 uppercase">ANSWER IS {randomCharacter.name}</p>
+              <button onClick={playAgain} className="bg-[#eee] text-black mt-6 mb-4 p-2 rounded-[12px_0_0_0]">PLAY AGAIN</button>
+            </div>
+          </div>
+        </div>
+      ) : null }
     </div>
   );
 }
