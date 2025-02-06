@@ -135,7 +135,7 @@ export default function Home() {
       {/* popup */}
       {(isWon) ? (
         <div className="relative flex justify-center items-center">
-          <div className="fixed top-80 w-[340px] lg:w-[500px] border border-[#eee] bg-[#171717] rounded-[12px_0_0_0] overflow-hidden scale-in-center">
+          <div className="fixed top-80 w-[350px] lg:w-[500px] border border-[#eee] bg-[#171717] rounded-[12px_0_0_0] overflow-hidden scale-in-center">
             <div className="bg-[#eee] text-black w-full py-2">
               <p className="my-auto text-center">YOU WON!</p>
             </div>
